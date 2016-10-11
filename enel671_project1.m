@@ -40,6 +40,17 @@ r2_2 = h(2,1)*h(2,3);
 r3_0 = h(3,1)^2+h(3,2)^2+h(3,3)^2;
 r3_1 = h(3,1)*h(3,2)+h(3,2)*h(3,3);
 r3_2 = h(3,1)*h(3,3);
+%% calculate u(n)
+u = zeros(3,1000);
+% transform each value of a with the three paths and add noise for channel
+% 1
+for i=1:3
+    for j=1:n
+        u(i,j) = h(1,i)*a(j);
+    end
+end
+u = awgn(u,40);
+
 %% Pre-Experiment calculations
 % Calculate eignevalues for autocorrelation matrix
     % Define tap-input vector u(n)
