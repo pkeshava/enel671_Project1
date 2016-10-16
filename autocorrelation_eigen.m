@@ -6,6 +6,6 @@ r = [r' zeros(1,8)];
 R = toeplitz(r)+Rv;
 [~, D]= eig(R);
 minval = min(D(D > 0));
-maxval = max(D);
+maxval = max(D(:));
 spread= maxval/minval;
 end

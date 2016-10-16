@@ -24,17 +24,19 @@ r = autocorrelation_values(h);
 [R3, max3, min3, spread3] = autocorrelation_eigen(r(:,3),Rv);
 [R4, max4, min4, spread4] = autocorrelation_eigen(r(:,4),Rv);
 %% Generate sequence of BPSK data source
-a = round(rand(1,8));
+a = round(rand(1,1000));
 n = size(a,2);
 for i=1:n
     if a(i) == 0
         a(i) = -1;
     end
 end
-   
+%% Calculate u(n)
+u = filterinput(a,h);
 %% Effect of Eignevalue Spread
 % Generate and plot the learning curves for Channels 1,2,3,4
 
+% Run data vector through LMS algorithm 
 
 %% Effect of Filter Order
 % Generate and plot MSE with oder M = 9, 11, 21
