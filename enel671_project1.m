@@ -12,16 +12,14 @@
 % dhat(n) = estimate of desired data
 % v(n) - zero mean gaussian noise
 %% Generate sequence of BPSK data source
-a = round(rand(1,1000));
+a = round(rand(1,8));
 n = size(a,2);
 for i=1:n
     if a(i) == 0
         a(i) = -1;
     end
 end
-%% Generate Guassian White Noise Data
-y = wgn(11,11,-40);
-x = var(y);
+
 %% Define impulse response matrix of channels
 h = [0.2194 1.0 0.2194;0.2798 1.0 0.2798;0.3365 1.0 0.3365;0.3887 1.0 0.3887];
 %% Calculate R Autocorrleation matrix and associated values for each channel
@@ -41,7 +39,7 @@ r3_0 = h(3,1)^2+h(3,2)^2+h(3,3)^2;
 r3_1 = h(3,1)*h(3,2)+h(3,2)*h(3,3);
 r3_2 = h(3,1)*h(3,3);
 %% calculate u(n)
-u = zeros(3,1000);
+u = zeros(3,8);
 % transform each value of a with the three paths and add noise for channel
 % 1
 for i=1:3
@@ -51,6 +49,13 @@ for i=1:3
 end
 u = awgn(u,40);
 
+%% Calculate autocorleation matrix with noise
+R = u'*u;
+for i=1:n
+    for j=1:n
+        R(i,j) = mean(u(i,j));
+    end
+end
 %% Pre-Experiment calculations
 % Calculate eignevalues for autocorrelation matrix
     % Define tap-input vector u(n)
