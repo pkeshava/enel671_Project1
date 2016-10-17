@@ -11,6 +11,9 @@
 % d(n) = a(n-totaldelta) - desired signal 
 % dhat(n) = estimate of desired data
 % v(n) - zero mean gaussian noise
+clear all
+close all
+clc
 %% Pre-Experiment Calculations
 % Define Noise matrix 
 sigma_squared = 0.0001;
@@ -25,7 +28,8 @@ r = autocorrelation_values(h);
 [R3, max3, min3, spread3] = autocorrelation_eigen(r(:,3),Rv);
 [R4, max4, min4, spread4] = autocorrelation_eigen(r(:,4),Rv);
 
-%% Set experiment conditions
+%% Effect of Eignevalue Spread
+% Set experiment conditions
 % Filter order M
 M = 11;
 % Step size mu
@@ -36,37 +40,32 @@ N = 600;
 delta=(M-1)/2 + (length(h(1,:))-1)/2;
 % Number of iterations for experiment
 K = 500;
-%% Generate sequence of BPSK data source
 for k=1:K
+    % Generate sequence of BPSK data source
     a = round(rand(1,N));
     for i=1:N
        if a(i) == 0
            a(i) = -1;
         end
     end
-% Calculate u(n)
-u = filterinput(a,h);
-
-% Effect of Eignevalue Spread
-% Generate and plot the learning curves for Channels 1,2,3,4
-
-
-% Run data vector through LMS algorithm for each channel and get calculated
-% error and weight vector
-[e1,W1] = LMS_P1(u(:,1),a,mu,delta,M);
-ed1(:,k) = e1.^2;
-MSEE1 = sum(ed1,2)/K;
-[e2,W2] = LMS_P1(u(:,2),a,mu,delta,M);
-ed2(:,k) = e2.^2;
-MSEE2 = sum(ed2,2)/K;
-[e3,W3] = LMS_P1(u(:,3),a,mu,delta,M);
-ed3(:,k) = e3.^2;
-MSEE3 = sum(ed3,2)/K;
-[e4,W4] = LMS_P1(u(:,4),a,mu,delta,M);
-ed4(:,k) = e4.^2;
-MSEE4 = sum(ed4,2)/K;
+    % Calculate u(n)
+    u = filterinput(a,h);
+    % Run data vector through LMS algorithm for each channel and get calculated
+    % error and weight vector
+    [e1,W1] = LMS_P1(u(:,1),a,mu,delta,M);
+    ed1(:,k) = e1.^2;
+    MSEE1 = sum(ed1,2)/K;
+    [e2,W2] = LMS_P1(u(:,2),a,mu,delta,M);
+    ed2(:,k) = e2.^2;
+    MSEE2 = sum(ed2,2)/K;
+    [e3,W3] = LMS_P1(u(:,3),a,mu,delta,M);
+    ed3(:,k) = e3.^2;
+    MSEE3 = sum(ed3,2)/K;
+    [e4,W4] = LMS_P1(u(:,4),a,mu,delta,M);
+    ed4(:,k) = e4.^2;
+    MSEE4 = sum(ed4,2)/K;
 end 
-% Plot it 
+% Plot learning curves
 
 for MSEE = [MSEE1 MSEE2 MSEE3 MSEE4]
     figure(1)
@@ -80,86 +79,93 @@ end
 hold off
 %% Effect of Filter Order
 % Generate and plot MSE with oder M = 9, 11, 21 for channel 2
-mu = 0.0375;
+mu = 0.075;
+N = 600;
+K = 500;
 for M = [9 11 21]
-for k=1:K
-    a = round(rand(1,N));
-    for i=1:N
-       if a(i) == 0
-           a(i) = -1;
+    delta=(M-1)/2 + (length(h(1,:))-1)/2;
+    for k=1:K
+        a = round(rand(1,N));
+        for i=1:N
+            if a(i) == 0
+                a(i) = -1;
+            end
         end
+    % Calculate u(n)
+    u = filterinput(a,h);
+    % Recursive LMS
+    [e2_2,W2_2] = LMS_P1(u(:,2),a,mu,delta,M);
+    ed2_2(:,k) = e2_2.^2;
+    MSEE2_2 = sum(ed2_2,2)/K;
     end
-% Calculate u(n)
-u = filterinput(a,h);
-% Recursive LMS
-[e2_2,W2_2] = LMS_P1(u(:,2),a,mu,delta,M);
-ed2_2(:,k) = e2_2.^2;
-MSEE2_2 = sum(ed2_2,2)/K;
-end
-figure(2)
-semilogy(1:N,MSEE2_2,'LineWidth',2)
-legend('M = 9','M = 11','M = 21')
-grid on
-xlabel('Time (s)');
-ylabel('Mean Squared Error');
-hold on
+    figure(2)
+    semilogy(1:N,MSEE2_2,'LineWidth',2)
+    legend('M = 9','M = 11','M = 21')
+    grid on
+    xlabel('Time (s)');
+    ylabel('Mean Squared Error');
+    hold on
 end
 hold off
 %% Effect of Step Size Parameter 
 % Generate MSE for M = 11, mu = 0.0125, 0.025, 0.075
 M = 11;
 N = 1600;
+delta=(M-1)/2 + (length(h(1,:))-1)/2;
+K = 500;
 % Generate and plot MSE with oder M = 9, 11, 21 for channel 2
 for mu = [0.0125 0.025 0.075]
-for k=1:K
-    a = round(rand(1,N));
-    for i=1:N
-       if a(i) == 0
-           a(i) = -1;
+    for k=1:K
+        a = round(rand(1,N));
+        for i=1:N
+            if a(i) == 0
+                a(i) = -1;
+            end
         end
+        % Calculate u(n)
+        u = filterinput(a,h);
+        % Recursive LMS
+        [e1_2,W1_2] = LMS_P1(u(:,1),a,mu,delta,M);
+        ed1_2(:,k) = e1_2.^2;
+        MSEE1_2 = sum(ed1_2,2)/K;
     end
-% Calculate u(n)
-u = filterinput(a,h);
-% Recursive LMS
-[e1_2,W1_2] = LMS_P1(u(:,1),a,mu,delta,M);
-ed1_2(:,k) = e1_2.^2;
-MSEE1_2 = sum(ed1_2,2)/K;
-end
-figure(3)
-semilogy(1:N,MSEE1_2,'LineWidth',2)
-legend('mu = 0.0125','mu = 0.025','mu = 0.075')
-grid on
-xlabel('Time (s)');
-ylabel('Mean Squared Error');
-hold on
+    figure(3)
+    semilogy(1:N,MSEE1_2,'LineWidth',2)
+    legend('mu = 0.0125','mu = 0.025','mu = 0.075')
+    grid on
+    xlabel('Time (s)');
+    ylabel('Mean Squared Error');
+    hold on
 end
 hold off
 %% Comparison of Standard LMS and Normalized LMS
-% Generate MSE for M = 11, mu = 0.0125, 0.025, 0.075
+% Generate MSE for M = 11, mu = 0.025, 0.075 and then
 M = 11;
 N = 1600;
+delta=(M-1)/2 + (length(h(1,:))-1)/2;
+K = 500;
 % Generate and plot MSE with oder M = 9, 11, 21 for channel 2
 for mu = [0.025 0.075]
-for k=1:K
-    a = round(rand(1,N));
-    for i=1:N
-       if a(i) == 0
-           a(i) = -1;
+    for k=1:K
+        a = round(rand(1,N));
+        for i=1:N
+            if a(i) == 0
+                a(i) = -1;
+            end
         end
+        % Calculate u(n)
+        u = filterinput(a,h);
+        % Recursive LMS
+        [e2_3,W2_3] = LMS_P1(u(:,2),a,mu,delta,M);
+        ed2_3(:,k) = e2_3.^2;
+        MSEE2_3 = sum(ed2_3,2)/K;
     end
-% Calculate u(n)
-u = filterinput(a,h);
-% Recursive LMS
-[e2_3,W2_3] = LMS_P1(u(:,2),a,mu,delta,M);
-ed2_3(:,k) = e2_3.^2;
-MSEE2_3 = sum(ed2_3,2)/K;
-end
-figure(4)
-semilogy(1:N,MSEE2_3,'LineWidth',2)
-grid on
-xlabel('Time (s)');
-ylabel('Mean Squared Error');
-hold on
+        figure(4)
+        semilogy(1:N,MSEE2_3,'LineWidth',2)
+        grid on
+        xlabel('Time (s)');
+        ylabel('Mean Squared Error');
+        hold on
 end
 
 for k=1:K
@@ -167,14 +173,14 @@ for k=1:K
     for i=1:N
        if a(i) == 0
            a(i) = -1;
-        end
+       end
     end
-% Calculate u(n)
-u = filterinput(a,h);
-% Recursive LMS
-[e2_n,W2_n] = NormalizedLMS_P1(u(:,2),a,delta,M);
-ed2_n(:,k) = e2_n.^2;
-MSEE2_n = sum(ed2_n,2)/K;
+    % Calculate u(n)
+    u = filterinput(a,h);
+    % Recursive LMS
+    [e2_n,W2_n] = NormalizedLMS_P1(u(:,2),a,delta,M);
+    ed2_n(:,k) = e2_n.^2;
+    MSEE2_n = sum(ed2_n,2)/K;
 end
 semilogy(1:N,MSEE2_n,'LineWidth',2)
 legend('mu = 0.025','mu = 0.075','Normalized LMS')
