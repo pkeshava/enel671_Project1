@@ -80,6 +80,7 @@ end
 hold off
 %% Effect of Filter Order
 % Generate and plot MSE with oder M = 9, 11, 21 for channel 2
+mu = 0.0375;
 for M = [9 11 21]
 for k=1:K
     a = round(rand(1,N));
@@ -105,9 +106,76 @@ hold on
 end
 hold off
 %% Effect of Step Size Parameter 
-% Generate MSE for M = 11, mew = 0.0125, 0.025, 0.075
-
-
+% Generate MSE for M = 11, mu = 0.0125, 0.025, 0.075
+M = 11;
+N = 1600;
+% Generate and plot MSE with oder M = 9, 11, 21 for channel 2
+for mu = [0.0125 0.025 0.075]
+for k=1:K
+    a = round(rand(1,N));
+    for i=1:N
+       if a(i) == 0
+           a(i) = -1;
+        end
+    end
+% Calculate u(n)
+u = filterinput(a,h);
+% Recursive LMS
+[e1_2,W1_2] = LMS_P1(u(:,1),a,mu,delta,M);
+ed1_2(:,k) = e1_2.^2;
+MSEE1_2 = sum(ed1_2,2)/K;
+end
+figure(3)
+semilogy(1:N,MSEE1_2,'LineWidth',2)
+legend('mu = 0.0125','mu = 0.025','mu = 0.075')
+grid on
+xlabel('Time (s)');
+ylabel('Mean Squared Error');
+hold on
+end
+hold off
 %% Comparison of Standard LMS and Normalized LMS
-% Comparison of Standard LMS and Normalized LMS
+% Generate MSE for M = 11, mu = 0.0125, 0.025, 0.075
+M = 11;
+N = 1600;
+% Generate and plot MSE with oder M = 9, 11, 21 for channel 2
+for mu = [0.025 0.075]
+for k=1:K
+    a = round(rand(1,N));
+    for i=1:N
+       if a(i) == 0
+           a(i) = -1;
+        end
+    end
+% Calculate u(n)
+u = filterinput(a,h);
+% Recursive LMS
+[e2_3,W2_3] = LMS_P1(u(:,2),a,mu,delta,M);
+ed2_3(:,k) = e2_3.^2;
+MSEE2_3 = sum(ed2_3,2)/K;
+end
+figure(4)
+semilogy(1:N,MSEE2_3,'LineWidth',2)
+grid on
+xlabel('Time (s)');
+ylabel('Mean Squared Error');
+hold on
+end
 
+for k=1:K
+    a = round(rand(1,N));
+    for i=1:N
+       if a(i) == 0
+           a(i) = -1;
+        end
+    end
+% Calculate u(n)
+u = filterinput(a,h);
+% Recursive LMS
+[e2_n,W2_n] = NormalizedLMS_P1(u(:,2),a,delta,M);
+ed2_n(:,k) = e2_n.^2;
+MSEE2_n = sum(ed2_n,2)/K;
+end
+semilogy(1:N,MSEE2_n,'LineWidth',2)
+legend('mu = 0.025','mu = 0.075','Normalized LMS')
+hold off
