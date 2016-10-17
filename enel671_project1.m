@@ -74,6 +74,7 @@ for MSEE = [MSEE1 MSEE2 MSEE3 MSEE4]
     grid on
     xlabel('Time (s)');
     ylabel('Mean Squared Error'); 
+    title('Effect of Eigenvalue Spread');
     hold on
 end
 hold off
@@ -104,6 +105,7 @@ for M = [9 11 21]
     grid on
     xlabel('Time (s)');
     ylabel('Mean Squared Error');
+    title('Effect of Filter Order');
     hold on
 end
 hold off
@@ -135,6 +137,7 @@ for mu = [0.0125 0.025 0.075]
     grid on
     xlabel('Time (s)');
     ylabel('Mean Squared Error');
+    title('Effect of Step Size Parameter');
     hold on
 end
 hold off
@@ -184,4 +187,5 @@ for k=1:K
 end
 semilogy(1:N,MSEE2_n,'LineWidth',2)
 legend('mu = 0.025','mu = 0.075','Normalized LMS')
+title('Comparison of Standard LMS and Normalized LMS');
 hold off
