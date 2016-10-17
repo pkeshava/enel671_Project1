@@ -25,17 +25,18 @@ r = autocorrelation_values(h);
 [R3, max3, min3, spread3] = autocorrelation_eigen(r(:,3),Rv);
 [R4, max4, min4, spread4] = autocorrelation_eigen(r(:,4),Rv);
 
-%% Generate sequence of BPSK data source
+%% Set experiment conditions
 % Filter order M
 M = 11;
 % Step size mu
 mu = 0.075;
 % Data length N
-N = 1000;
+N = 600;
 % Define delay as seen by the desired signal
 delta=(M-1)/2 + (length(h(1,:))-1)/2;
 % Number of iterations for experiment
 K = 500;
+%% Generate sequence of BPSK data source
 for k=1:K
     a = round(rand(1,N));
     for i=1:N
@@ -65,24 +66,44 @@ MSEE3 = sum(ed3,2)/K;
 ed4(:,k) = e4.^2;
 MSEE4 = sum(ed4,2)/K;
 end 
-%% Plot it
-% 
+% Plot it 
+
 for MSEE = [MSEE1 MSEE2 MSEE3 MSEE4]
     figure(1)
-    semilogy(1:1000,MSEE,'LineWidth',2)
+    semilogy(1:N,MSEE,'LineWidth',2)
     legend('Channel 1','Channel 2','Channel 3','Channel 4')
     grid on
     xlabel('Time (s)');
-    ylabel('Mean Squared Error');
+    ylabel('Mean Squared Error'); 
     hold on
 end
+hold off
 %% Effect of Filter Order
 % Generate and plot MSE with oder M = 9, 11, 21 for channel 2
-
-
-
-
-
+for M = [9 11 21]
+for k=1:K
+    a = round(rand(1,N));
+    for i=1:N
+       if a(i) == 0
+           a(i) = -1;
+        end
+    end
+% Calculate u(n)
+u = filterinput(a,h);
+% Recursive LMS
+[e2_2,W2_2] = LMS_P1(u(:,2),a,mu,delta,M);
+ed2_2(:,k) = e2_2.^2;
+MSEE2_2 = sum(ed2_2,2)/K;
+end
+figure(2)
+semilogy(1:N,MSEE2_2,'LineWidth',2)
+legend('M = 9','M = 11','M = 21')
+grid on
+xlabel('Time (s)');
+ylabel('Mean Squared Error');
+hold on
+end
+hold off
 %% Effect of Step Size Parameter 
 % Generate MSE for M = 11, mew = 0.0125, 0.025, 0.075
 
