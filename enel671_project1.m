@@ -181,7 +181,7 @@ for k=1:K
     % Calculate u(n)
     u = filterinput(a,h);
     % Recursive LMS
-    [e2_n,W2_n] = NormalizedLMS_P1(u(:,2),a,delta,M);
+    [e2_n,W2_n] = Normalized_LMS_algorithm(u(:,2),a,delta,M);
     ed2_n(:,k) = e2_n.^2;
     MSEE2_n = sum(ed2_n,2)/K;
 end
