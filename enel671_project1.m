@@ -42,12 +42,7 @@ delta=(M-1)/2 + (length(h(1,:))-1)/2;
 K = 500;
 for k=1:K
     % Generate sequence of BPSK data source
-    a = round(rand(1,N));
-    for i=1:N
-       if a(i) == 0
-           a(i) = -1;
-        end
-    end
+    a = BPSK(N);
     % Calculate u(n)
     u = filterinput(a,h);
     % Run data vector through LMS algorithm for each channel and get calculated
@@ -86,18 +81,13 @@ K = 500;
 for M = [9 11 21]
     delta=(M-1)/2 + (length(h(1,:))-1)/2;
     for k=1:K
-        a = round(rand(1,N));
-        for i=1:N
-            if a(i) == 0
-                a(i) = -1;
-            end
-        end
-    % Calculate u(n)
-    u = filterinput(a,h);
-    % LMS
-    [e2_2,W2_2] = LMS_algorithm(u(:,2),a,mu,delta,M);
-    ed2_2(:,k) = e2_2.^2;
-    MSEE2_2 = sum(ed2_2,2)/K;
+        a = BPSK(N);
+        % Calculate u(n)
+        u = filterinput(a,h);
+        % LMS
+        [e2_2,W2_2] = LMS_algorithm(u(:,2),a,mu,delta,M);
+        ed2_2(:,k) = e2_2.^2;
+        MSEE2_2 = sum(ed2_2,2)/K;
     end
     figure(2)
     semilogy(1:N,MSEE2_2,'LineWidth',2)
@@ -118,12 +108,7 @@ K = 500;
 % Generate and plot MSE with oder M = 9, 11, 21 for channel 2
 for mu = [0.0125 0.025 0.075]
     for k=1:K
-        a = round(rand(1,N));
-        for i=1:N
-            if a(i) == 0
-                a(i) = -1;
-            end
-        end
+        a = BPSK(N);
         % Calculate u(n)
         u = filterinput(a,h);
         % Recursive LMS
@@ -150,12 +135,7 @@ K = 500;
 % Generate and plot MSE with oder M = 9, 11, 21 for channel 2
 for mu = [0.025 0.075]
     for k=1:K
-        a = round(rand(1,N));
-        for i=1:N
-            if a(i) == 0
-                a(i) = -1;
-            end
-        end
+        a = BPSK(N);
         % Calculate u(n)
         u = filterinput(a,h);
         % Recursive LMS
@@ -172,12 +152,7 @@ for mu = [0.025 0.075]
 end
 
 for k=1:K
-    a = round(rand(1,N));
-    for i=1:N
-       if a(i) == 0
-           a(i) = -1;
-       end
-    end
+    a = BPSK(N);
     % Calculate u(n)
     u = filterinput(a,h);
     % Recursive LMS
