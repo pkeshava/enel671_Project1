@@ -2,15 +2,13 @@
 % Pouyan Keshavarzian
 % FALL 2016
 % https://github.com/pkeshava/enel671_Project1
-%
-% a(n) - BPSK data source
-% h(n) - channel impulse response
-% delta1 - channel delay
-% delta2 - adaptive filter delay
-% w(n) - adaptive filter impulse response
-% d(n) = a(n-totaldelta) - desired signal 
-% dhat(n) = estimate of desired data
-% v(n) - zero mean gaussian noise
+% LMS algorithm
+    % Filter order: M
+    % Step-size parameter: mu
+    % vector data length: N
+    % channel delay + adaptive filter delay: delta
+    % number of runs: K
+    
 clear all
 close all
 clc
@@ -29,16 +27,10 @@ r = autocorrelation_values(h);
 [R4, max4, min4, spread4] = autocorrelation_eigen(r(:,4),Rv);
 
 %% Effect of Eignevalue Spread
-% Set experiment conditions
-% Filter order M
 M = 11;
-% Step size mu
 mu = 0.075;
-% Data length N
 N = 600;
-% Define delay as seen by the desired signal
 delta=(M-1)/2 + (length(h(1,:))-1)/2;
-% Number of iterations for experiment
 K = 500;
 for k=1:K
     % Generate sequence of BPSK data source
@@ -127,7 +119,6 @@ for mu = [0.0125 0.025 0.075]
 end
 hold off
 %% Comparison of Standard LMS and Normalized LMS
-% Generate MSE for M = 11, mu = 0.025, 0.075 and then
 M = 11;
 N = 1600;
 delta=(M-1)/2 + (length(h(1,:))-1)/2;
