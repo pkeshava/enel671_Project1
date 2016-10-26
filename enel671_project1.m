@@ -52,16 +52,16 @@ for k=1:K
     u = filterinput(a,h);
     % Run data vector through LMS algorithm for each channel and get calculated
     % error and weight vector
-    [e1,W1] = LMS_P1(u(:,1),a,mu,delta,M);
+    [e1,W1] = LMS_algorithm(u(:,1),a,mu,delta,M);
     ed1(:,k) = e1.^2;
     MSEE1 = sum(ed1,2)/K;
-    [e2,W2] = LMS_P1(u(:,2),a,mu,delta,M);
+    [e2,W2] = LMS_algorithm(u(:,2),a,mu,delta,M);
     ed2(:,k) = e2.^2;
     MSEE2 = sum(ed2,2)/K;
-    [e3,W3] = LMS_P1(u(:,3),a,mu,delta,M);
+    [e3,W3] = LMS_algorithm(u(:,3),a,mu,delta,M);
     ed3(:,k) = e3.^2;
     MSEE3 = sum(ed3,2)/K;
-    [e4,W4] = LMS_P1(u(:,4),a,mu,delta,M);
+    [e4,W4] = LMS_algorithm(u(:,4),a,mu,delta,M);
     ed4(:,k) = e4.^2;
     MSEE4 = sum(ed4,2)/K;
 end 
@@ -94,8 +94,8 @@ for M = [9 11 21]
         end
     % Calculate u(n)
     u = filterinput(a,h);
-    % Recursive LMS
-    [e2_2,W2_2] = LMS_P1(u(:,2),a,mu,delta,M);
+    % LMS
+    [e2_2,W2_2] = LMS_algorithm(u(:,2),a,mu,delta,M);
     ed2_2(:,k) = e2_2.^2;
     MSEE2_2 = sum(ed2_2,2)/K;
     end
@@ -127,7 +127,7 @@ for mu = [0.0125 0.025 0.075]
         % Calculate u(n)
         u = filterinput(a,h);
         % Recursive LMS
-        [e1_2,W1_2] = LMS_P1(u(:,1),a,mu,delta,M);
+        [e1_2,W1_2] = LMS_algorithm(u(:,1),a,mu,delta,M);
         ed1_2(:,k) = e1_2.^2;
         MSEE1_2 = sum(ed1_2,2)/K;
     end
@@ -159,7 +159,7 @@ for mu = [0.025 0.075]
         % Calculate u(n)
         u = filterinput(a,h);
         % Recursive LMS
-        [e2_3,W2_3] = LMS_P1(u(:,2),a,mu,delta,M);
+        [e2_3,W2_3] = LMS_algorithm(u(:,2),a,mu,delta,M);
         ed2_3(:,k) = e2_3.^2;
         MSEE2_3 = sum(ed2_3,2)/K;
     end
